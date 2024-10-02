@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player Movement")]
     public float moveSpeed = 5.0f;
     public float jumpForce = 5.0F;
+    public float rotationSpeed = 10f;
 
     [Header("Camera Settings")]
     public Camera firstPersonCamera;
@@ -26,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
     public float mouseSenesitivity = 2f;
 
-    private bool isFirstPerson = true;
+    public bool isFirstPerson = true;
     private bool isGrounded;
     private Rigidbody rb;
 
@@ -43,10 +44,15 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleMovement();
+        
         HandleRotation();
         HandleJump();
         HandleCameraToggle();
+    }
+
+    private void FixedUpdate()
+    {
+        HandleMovement();
     }
 
     void SetActiveCamera()
@@ -67,10 +73,11 @@ public class PlayerController : MonoBehaviour
         targetVerticalRoataion = Mathf.Clamp(targetVerticalRoataion, yMinLimit, yMaxLimit);
         phi = Mathf.MoveTowards(phi, targetVerticalRoataion, verticalRotationSpeed * Time.deltaTime);
 
-        transform.rotation = Quaternion.Euler(0.0f, theta, 0.0f);
+        
 
         if(isFirstPerson)
         {
+            transform.rotation = Quaternion.Euler(0.0f, theta, 0.0f);
             firstPersonCamera.transform.localRotation = Quaternion.Euler(phi, 0.0f, 0.0f);
         }
         else
@@ -115,7 +122,9 @@ public class PlayerController : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-        if(!isFirstPerson)
+        Vector3 movement;
+
+        if (!isFirstPerson)
         {
             Vector3 cameraForward = thirdPersonCamera.transform.forward;
             cameraForward.y = 0f;
@@ -125,14 +134,22 @@ public class PlayerController : MonoBehaviour
             cameraRight.y = 0f;
             cameraRight.Normalize();
 
-            Vector3 movement = cameraForward * moveVertical + cameraRight * moveHorizontal;
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+            movement = cameraForward * moveVertical + cameraRight * moveHorizontal;
+            
         }
         else
         {
-            Vector3 movement = transform.right * moveHorizontal + transform.forward * moveVertical;
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+            movement = transform.right * moveHorizontal + transform.forward * moveVertical;
+            
         }
+
+        if(movement.magnitude > 0.1f)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
+
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
 
     }
 
