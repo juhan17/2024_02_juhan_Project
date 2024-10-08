@@ -28,8 +28,15 @@ public class PlayerController : MonoBehaviour
     public float mouseSenesitivity = 2f;
 
     public bool isFirstPerson = true;
-    private bool isGrounded;
+    //private bool isGrounded;
     private Rigidbody rb;
+
+    public float fallingThreshold = -0.1f;
+
+    [Header("Ground Check Setting")]
+    public float groundCheckDistance = 0.3f;
+    public float slopedLimit = 45f;
+    public const int groundCheckPoints = 5;
 
     // Start is called before the first frame update
     void Start()
@@ -46,8 +53,12 @@ public class PlayerController : MonoBehaviour
     {
         
         HandleRotation();
-        HandleJump();
         HandleCameraToggle();
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            HandleJump();
+        }
     }
 
     private void FixedUpdate()
@@ -61,7 +72,7 @@ public class PlayerController : MonoBehaviour
         thirdPersonCamera.gameObject.SetActive(!isFirstPerson);
     }
 
-    void HandleRotation()
+    public void HandleRotation()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSenesitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSenesitivity;
@@ -93,7 +104,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleCameraToggle()
+    public void HandleCameraToggle()
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -110,14 +121,13 @@ public class PlayerController : MonoBehaviour
 
     void HandleJump()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if(isGrounded())
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false;
         }
     }
 
-    void HandleMovement()
+    public void HandleMovement()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
@@ -153,8 +163,18 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void OnCollisionStay(Collision collision)
+    public bool isFalling()
     {
-        isGrounded = true;
+        return rb.velocity.y < fallingThreshold && !isGrounded();
+    }
+
+    public bool isGrounded()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, 2.0f);
+    }
+
+    public float GetVerticalVelocity()
+    {
+        return rb.velocity.y;
     }
 }
