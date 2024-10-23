@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PlayerState : MonoBehaviour
+public abstract class PlayerState 
 {
     protected PlayerStateMachine stateMachine;
     protected PlayerController playerController;
+    protected PlayerAnimationManager animationManager;
 
     public PlayerState(PlayerStateMachine stateMachine)
     {
         this.stateMachine = stateMachine;
         this.playerController = stateMachine.PlayerController;
+        this.animationManager = stateMachine.GetComponent<PlayerAnimationManager>();
     }
 
     public virtual void Enter() { }
