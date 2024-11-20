@@ -36,7 +36,7 @@ public class ConstructibleBuilding : MonoBehaviour
             {
                 FloatingTextManager.Instance.Show($"{buildingName} 건설 시작!", transform.position + Vector3.up);
             }
-            StartCoroutine(CostructionRoutine());
+            StartCoroutine(ConstructionRoutine());
         }
         else
         {

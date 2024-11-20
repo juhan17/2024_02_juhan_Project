@@ -7,6 +7,9 @@ public enum ItemType
     Crystal,
     Cave,
     Bush,
+    VegetableStew,
+    FruitSalad,
+    RepairKit
 }
 
 public class ItemDetector : MonoBehaviour
