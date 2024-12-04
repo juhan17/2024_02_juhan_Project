@@ -10,6 +10,10 @@ public class PlayerInventory : MonoBehaviour
     public int caveCount = 0;
     public int bushCount = 0;
 
+    public int vegetableStewCount = 0;
+    public int fruitSaladCount = 0;
+    public int repairKitCount = 0;
+
     public void Start()
     {
         survivalStats = GetComponent<SurvivalStats>();
@@ -63,6 +67,19 @@ public class PlayerInventory : MonoBehaviour
                 bushCount++;
                 Debug.Log($"수풀 획득! 현재 개수 :{bushCount}");
                 break;
+
+            case ItemType.VegetableStew:
+                vegetableStewCount++;
+                Debug.Log($"야채 스튜 획득! 현재 개수 :{vegetableStewCount}");
+                break;
+            case ItemType.FruitSalad:
+                fruitSaladCount++;
+                Debug.Log($"과일 샐러드 획득! 현재 개수 :{fruitSaladCount}");
+                break;
+            case ItemType.RepairKit:
+                repairKitCount++;
+                Debug.Log($"수리키트 획득! 현재 개수 :{repairKitCount}");
+                break;
         }
     }
 
@@ -94,6 +111,31 @@ public class PlayerInventory : MonoBehaviour
                     return true;
                 }
                 break;
+
+            case ItemType.VegetableStew:
+                if (vegetableStewCount >= amount)
+                {
+                    vegetableStewCount -= amount;
+                    Debug.Log($"야채 스튜 {amount} 사용! 현재 개수 :{vegetableStewCount}");
+                    return true;
+                }
+                break;
+            case ItemType.FruitSalad:
+                if (fruitSaladCount >= amount)
+                {
+                    fruitSaladCount -= amount;
+                    Debug.Log($"과일 샐러드 {amount} 사용! 현재 개수 :{fruitSaladCount}");
+                    return true;
+                }
+                break;
+            case ItemType.RepairKit:
+                if (repairKitCount >= amount)
+                {
+                    repairKitCount -= amount;
+                    Debug.Log($"수리키트 {amount} 사용! 현재 개수 :{repairKitCount}");
+                    return true;
+                }
+                break;
         }
 
         Debug.Log($"{itemType} 아이템이 부족합니다.");
@@ -110,6 +152,13 @@ public class PlayerInventory : MonoBehaviour
                 return bushCount;
             case ItemType.Cave:
                 return caveCount;
+
+            case ItemType.VegetableStew:
+                return vegetableStewCount;
+            case ItemType.FruitSalad:
+                return fruitSaladCount;
+            case ItemType.RepairKit:
+                return repairKitCount;
             default:
                 return 0;
         }
